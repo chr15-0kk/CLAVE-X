@@ -1,0 +1,22 @@
+body {
+  background-color: #002a4f;
+  color: white;
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 30px;
+}
+
+button {
+  padding: 15px;
+  margin: 10px;
+  font-size: 1.2em;
+  background-color: red;
+  border: none;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.menu button {
+  background-color: #0055aa;
+}
