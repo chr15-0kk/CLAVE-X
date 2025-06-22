@@ -1,14 +1,100 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clave X - Emergencias</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #ff5858, #f09819);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 6px #900000aa;
+    }
+    p {
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 1px 1px 4px #660000bb;
+    }
+    button {
+      background-color: #900000;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin: 0.5rem;
+      box-shadow: 0 4px 6px #660000aa;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button:hover, button:focus {
+      background-color: #ff3b3b;
+      transform: scale(1.05);
+      outline: none;
+    }
+    .menu {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    /* Área para formularios (oculto inicialmente) */
+    #formulario-container {
+      background: rgba(255,255,255,0.15);
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 0 10px 2px #ff5858aa;
+      color: #fff;
+      font-size: 1rem;
+      min-height: 100px;
+      display: none;
+    }
+    /* Pie de página */
+    footer {
+      margin-top: auto;
+      background: rgba(0,0,0,0.6);
+      color: #eee;
+      font-size: 0.85rem;
+      padding: 1rem 1.5rem;
+      width: 100%;
+      max-width: 600px;
+      border-radius: 10px 10px 0 0;
+      text-align: center;
+      box-shadow: inset 0 2px 5px #ff5858cc;
+    }
+    footer strong {
+      color: #ffbbbb;
+    }
+    footer a {
+      color: #ff9999;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    footer a:hover {
+      color: #fff;
+    }
+  </style>
 
-  <!-- Firebase SDK -->
+  <!-- Firebase SDK -->  
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
   <script>
+    // Configuración Firebase (reemplaza tus datos)
     const firebaseConfig = {
       apiKey: "TU_API_KEY",
       authDomain: "clave-x.firebaseapp.com",
@@ -18,18 +104,96 @@
       appId: "1:XXXXXXXXXX:web:XXXXXXXXXX"
     };
     firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const alertasRef = database.ref("alertas");
+
+    // Función para enviar alerta general con confirmación
+    function enviarAlerta() {
+      if (!confirm("¿Estás seguro que quieres enviar una alerta general? Esto no debe usarse sin causa justificada.")) return;
+
+      const alerta = {
+        tipo: "General",
+        detalle: "Alerta directa enviada",
+        fecha: Date.now()
+      };
+      alertasRef.push(alerta)
+      .then(() => alert("Alerta enviada con éxito."))
+      .catch(err => alert("Error al enviar alerta: " + err.message));
+    }
+
+    // Mostrar formularios de denuncia
+    function mostrarFormulario(tipo) {
+      const cont = document.getElementById('formulario-container');
+      cont.style.display = 'block';
+
+      if(tipo === 'robo') {
+        cont.innerHTML = `
+          <h3>Formulario de denuncia - Robo</h3>
+          <p>Por favor, ingresa detalles del robo:</p>
+          <textarea id="detalle-robo" rows="4" style="width:100%; border-radius: 6px; padding:8px;"></textarea>
+          <button onclick="enviarDenuncia('Robo')">Enviar Denuncia</button>
+        `;
+      } else if(tipo === 'violencia') {
+        cont.innerHTML = `
+          <h3>Formulario de denuncia - Violencia</h3>
+          <p>Por favor, ingresa detalles de la violencia:</p>
+          <textarea id="detalle-violencia" rows="4" style="width:100%; border-radius: 6px; padding:8px;"></textarea>
+          <button onclick="enviarDenuncia('Violencia')">Enviar Denuncia</button>
+        `;
+      }
+    }
+
+    // Enviar denuncia a Firebase con validación básica y confirmación
+    function enviarDenuncia(tipo) {
+      let detalle = "";
+      if(tipo === 'Robo') {
+        detalle = document.getElementById('detalle-robo').value.trim();
+      } else if(tipo === 'Violencia') {
+        detalle = document.getElementById('detalle-violencia').value.trim();
+      }
+      if(detalle.length < 10) {
+        alert("Por favor, escribe al menos 10 caracteres describiendo la situación.");
+        return;
+      }
+      if(!confirm(`Confirmas que deseas enviar la denuncia de tipo "${tipo}"?`)) return;
+
+      const alerta = {
+        tipo: tipo,
+        detalle: detalle,
+        fecha: Date.now()
+      };
+      alertasRef.push(alerta)
+      .then(() => {
+        alert("Denuncia enviada con éxito. Gracias por reportar.");
+        document.getElementById('formulario-container').style.display = 'none';
+      })
+      .catch(err => alert("Error al enviar denuncia: " + err.message));
+    }
   </script>
 </head>
 <body>
-  <h1>🚨 Clave X</h1>
-  <p>Presiona el botón para pedir ayuda</p>
-  <button onclick="enviarAlerta()">Enviar Alerta</button>
+  <header>
+    <h1>🚨 Clave X</h1>
+    <p>Presiona el botón para pedir ayuda</p>
+  </header>
 
-  <div class="menu">
-    <button onclick="mostrarFormulario('robo')">Robo</button>
-    <button onclick="mostrarFormulario('violencia')">Violencia</button>
-  </div>
+  <main>
+    <button onclick="enviarAlerta()" aria-label="Enviar alerta general">Enviar Alerta</button>
 
-  <script src="script.js"></script>
+    <nav class="menu" aria-label="Opciones de denuncia">
+      <button onclick="mostrarFormulario('robo')" aria-haspopup="dialog" aria-controls="formulario-container">Robo</button>
+      <button onclick="mostrarFormulario('violencia')" aria-haspopup="dialog" aria-controls="formulario-container">Violencia</button>
+    </nav>
+
+    <section id="formulario-container" role="region" aria-live="polite" aria-label="Formulario de denuncia">
+      <!-- Aquí se cargan los formularios dinámicamente -->
+    </section>
+  </main>
+
+  <footer>
+    <p><strong>Advertencia:</strong> Esta plataforma es para emergencias reales. El uso indebido o falsas alarmas pueden ser sancionados según el Código Penal y la Constitución Mexicana.</p>
+    <p>En casos de violencia contra mujeres, se activará la Policía Violeta.</p>
+    <p>Para más información, consulta las <a href="https://www.gob.mx/seguridad" target="_blank" rel="noopener noreferrer">normas oficiales</a>.</p>
+  </footer>
 </body>
 </html>
