@@ -2,101 +2,93 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clave X - Emergencias</title>
   <style>
+    /* Estilos básicos para tu app */
     body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(145deg, #0d1b2a, #1b263b);
       color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
       padding: 2rem;
+      margin: 0;
     }
-
     h1 {
-      font-size: 2.8rem;
       color: #ff4d4d;
       margin-bottom: 0.5rem;
+      text-shadow: 2px 2px 6px #900000aa;
     }
-
     p {
-      font-size: 1.2rem;
       margin-bottom: 2rem;
     }
-
     button {
-      padding: 1rem 2rem;
-      font-size: 1.1rem;
+      background-color: #e63946;
       border: none;
       border-radius: 8px;
-      background-color: #e63946;
       color: white;
       cursor: pointer;
+      font-size: 1.2rem;
       margin: 0.5rem;
-      transition: all 0.3s ease;
+      padding: 1rem 2rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
       box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
     }
-
-    button:hover {
+    button:hover, button:focus {
       background-color: #ff6b6b;
+      outline: none;
       transform: scale(1.05);
     }
-
     .menu {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
       gap: 1rem;
       margin-bottom: 2rem;
     }
-
-    form {
+    #formulario {
       background-color: rgba(255, 255, 255, 0.05);
-      padding: 2rem;
       border-radius: 10px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+      box-shadow: 0 0 10px 2px #ff5858aa;
+      color: #fff;
       display: none;
       flex-direction: column;
       gap: 1rem;
-    }
-
-    label {
-      text-align: left;
-      font-weight: bold;
-    }
-
-    input, textarea {
+      max-width: 450px;
+      padding: 2rem;
       width: 100%;
-      padding: 0.6rem;
+    }
+    label {
+      font-weight: bold;
+      text-align: left;
+    }
+    input, textarea {
       border-radius: 5px;
       border: none;
       font-size: 1rem;
+      padding: 0.6rem;
+      width: 100%;
     }
-
     footer {
-      margin-top: auto;
-      padding: 1.5rem;
       background: rgba(0, 0, 0, 0.7);
-      color: #ffcdd2;
       border-radius: 10px;
-      max-width: 800px;
-      text-align: center;
+      box-shadow: inset 0 2px 5px #ff5858cc;
+      color: #ffcdd2;
       font-size: 0.95rem;
-      margin-top: 3rem;
+      margin-top: auto;
+      max-width: 800px;
+      padding: 1.5rem;
+      text-align: center;
+      width: 100%;
     }
-
-    footer strong {
-      color: #ff9999;
-    }
-
     footer a {
       color: #ff8a80;
+      cursor: pointer;
       text-decoration: underline;
+    }
+    footer a:hover {
+      color: #fff;
     }
   </style>
 </head>
@@ -113,21 +105,15 @@
 
   <form id="formulario" onsubmit="enviarFormulario(event)">
     <h3 id="form-title">Formulario</h3>
-
     <input type="hidden" id="tipoDenuncia" />
-
     <label for="nombrePersona">Nombre o descripción de la persona involucrada:</label>
     <input type="text" id="nombrePersona" required />
-
     <label for="descripcionHecho">¿Qué ocurrió exactamente?</label>
     <textarea id="descripcionHecho" rows="4" required></textarea>
-
     <label for="objetosInvolucrados">¿Qué fue robado / usado / visto?</label>
     <input type="text" id="objetosInvolucrados" />
-
     <label for="fechaIncidente">¿Cuándo ocurrió?</label>
     <input type="date" id="fechaIncidente" required />
-
     <button type="submit">Enviar Denuncia</button>
   </form>
 
@@ -135,48 +121,56 @@
     <p><strong>Advertencia:</strong> Esta plataforma es de uso exclusivo para emergencias reales.</p>
     <p>El uso indebido, bromas o denuncias falsas pueden ser sancionadas según el <strong>Código Penal</strong> y la <strong>Constitución Mexicana</strong>.</p>
     <p>En caso de violencia contra mujeres, se notificará a la <strong>Policía Violeta</strong>.</p>
-    <p><a href="https://www.gob.mx/seguridad" target="_blank">Consulta aquí tus derechos y obligaciones</a></p>
+    <p><a href="https://www.gob.mx/seguridad" target="_blank" rel="noopener noreferrer">Consulta aquí tus derechos y obligaciones</a></p>
   </footer>
 
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+
   <script>
-    // Configuración Firebase (reemplaza con la tuya)
+    // Configuración Firebase (¡reemplaza con tu config real!)
     const firebaseConfig = {
-      apiKey: "TU_API_KEY",
-      authDomain: "clave-x.firebaseapp.com",
-      projectId: "clave-x",
-      storageBucket: "clave-x.appspot.com",
-      messagingSenderId: "XXXXXXXX",
-      appId: "1:XXXXXXXXXX:web:XXXXXXXXXX"
+  apiKey: "AIzaSyAuPaLxM6sG7yJYrhAf48280u2yXZyL0cE",
+  authDomain: "clave-x-9eb9f.firebaseapp.com",
+  projectId: "clave-x-9eb9f",
+  storageBucket: "clave-x-9eb9f.firebasestorage.app",
+  messagingSenderId: "751179620354",
+  appId: "1:751179620354:web:f800e5cee1123e68efc71b",
+  measurementId: "G-QT7QPZ1KR0"
     };
+
+    // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const alertasRef = db.ref("alertas");
 
+    // Función para enviar alerta con ubicación
     function enviarAlerta() {
+      if (!confirm("¿Estás seguro que quieres enviar una alerta general? Esto no debe usarse sin causa justificada.")) return;
       if (!navigator.geolocation) return alert("Tu navegador no permite geolocalización.");
 
-      if (!confirm("¿Deseas enviar una alerta de emergencia con tu ubicación actual?")) return;
-
-      navigator.geolocation.getCurrentPosition(async pos => {
+      navigator.geolocation.getCurrentPosition(pos => {
         const alerta = {
           tipo: "Emergencia",
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
           fecha: new Date().toISOString()
         };
-        await db.ref("alertas").push(alerta);
-        alert("🚨 Alerta enviada con tu ubicación.");
+        alertasRef.push(alerta)
+          .then(() => alert("🚨 Alerta enviada con tu ubicación."))
+          .catch(err => alert("Error al enviar alerta: " + err.message));
       }, () => alert("No se pudo obtener tu ubicación."));
     }
 
+    // Mostrar formulario y asignar tipo
     function mostrarFormulario(tipo) {
-      const form = document.getElementById("formulario");
-      form.style.display = "flex";
+      document.getElementById("formulario").style.display = "flex";
       document.getElementById("form-title").textContent = "Formulario de denuncia - " + tipo.toUpperCase();
       document.getElementById("tipoDenuncia").value = tipo;
     }
 
+    // Enviar formulario de denuncia
     async function enviarFormulario(e) {
       e.preventDefault();
 
@@ -194,9 +188,11 @@
         return;
       }
 
+      if(!confirm(`Confirmas que deseas enviar la denuncia de tipo "${denuncia.tipo}"?`)) return;
+
       try {
-        await db.ref("alertas").push(denuncia);
-        alert("✅ Denuncia enviada correctamente.");
+        await alertasRef.push(denuncia);
+        alert("✅ Denuncia enviada correctamente. Gracias por reportar.");
         document.getElementById("formulario").reset();
         document.getElementById("formulario").style.display = "none";
       } catch (error) {
@@ -206,3 +202,4 @@
   </script>
 </body>
 </html>
+
