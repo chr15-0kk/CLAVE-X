@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Clave X - Emergencias</title>
   <style>
-    /* Estilos básicos para tu app */
     body {
       background: linear-gradient(145deg, #0d1b2a, #1b263b);
       color: #f8f9fa;
@@ -119,8 +118,8 @@
 
   <footer>
     <p><strong>Advertencia:</strong> Esta plataforma es de uso exclusivo para emergencias reales.</p>
-    <p>El uso indebido, bromas o denuncias falsas pueden ser sancionadas según el <strong>Código Penal</strong> y la <strong>Constitución Mexicana</strong>.</p>
-    <p>En caso de violencia contra mujeres, se notificará a la <strong>Policía Violeta</strong>.</p>
+    <p>El uso indebido o denuncias falsas puede ser sancionado por el <strong>Código Penal</strong> y la <strong>Constitución Mexicana</strong>.</p>
+    <p>En casos de violencia contra mujeres, se notificará a la <strong>Policía Violeta</strong>.</p>
     <p><a href="https://www.gob.mx/seguridad" target="_blank" rel="noopener noreferrer">Consulta aquí tus derechos y obligaciones</a></p>
   </footer>
 
@@ -129,26 +128,26 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
 
   <script>
-    // Configuración Firebase (¡reemplaza con tu config real!)
     const firebaseConfig = {
-  apiKey: "AIzaSyAuPaLxM6sG7yJYrhAf48280u2yXZyL0cE",
-  authDomain: "clave-x-9eb9f.firebaseapp.com",
-  projectId: "clave-x-9eb9f",
-  storageBucket: "clave-x-9eb9f.firebasestorage.app",
-  messagingSenderId: "751179620354",
-  appId: "1:751179620354:web:f800e5cee1123e68efc71b",
-  measurementId: "G-QT7QPZ1KR0"
+      apiKey: "AIzaSyAuPaLxM6sG7yJYrhAf48280u2yXZyL0cE",
+      authDomain: "clave-x-9eb9f.firebaseapp.com",
+      databaseURL: "https://clave-x-9eb9f-default-rtdb.firebaseio.com",
+      projectId: "clave-x-9eb9f",
+      storageBucket: "clave-x-9eb9f.appspot.com",
+      messagingSenderId: "751179620354",
+      appId: "1:751179620354:web:f800e5cee1123e68efc71b",
+      measurementId: "G-QT7QPZ1KR0"
     };
 
     // Inicializar Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.database(app);
     const alertasRef = db.ref("alertas");
 
-    // Función para enviar alerta con ubicación
+    // Enviar alerta con ubicación
     function enviarAlerta() {
-      if (!confirm("¿Estás seguro que quieres enviar una alerta general? Esto no debe usarse sin causa justificada.")) return;
-      if (!navigator.geolocation) return alert("Tu navegador no permite geolocalización.");
+      if (!confirm("¿Estás seguro que quieres enviar una alerta general?")) return;
+      if (!navigator.geolocation) return alert("Geolocalización no disponible.");
 
       navigator.geolocation.getCurrentPosition(pos => {
         const alerta = {
@@ -163,14 +162,14 @@
       }, () => alert("No se pudo obtener tu ubicación."));
     }
 
-    // Mostrar formulario y asignar tipo
+    // Mostrar formulario
     function mostrarFormulario(tipo) {
       document.getElementById("formulario").style.display = "flex";
       document.getElementById("form-title").textContent = "Formulario de denuncia - " + tipo.toUpperCase();
       document.getElementById("tipoDenuncia").value = tipo;
     }
 
-    // Enviar formulario de denuncia
+    // Enviar denuncia
     async function enviarFormulario(e) {
       e.preventDefault();
 
@@ -188,11 +187,11 @@
         return;
       }
 
-      if(!confirm(`Confirmas que deseas enviar la denuncia de tipo "${denuncia.tipo}"?`)) return;
+      if (!confirm(`¿Deseas enviar la denuncia de tipo "${denuncia.tipo}"?`)) return;
 
       try {
         await alertasRef.push(denuncia);
-        alert("✅ Denuncia enviada correctamente. Gracias por reportar.");
+        alert("✅ Denuncia enviada correctamente.");
         document.getElementById("formulario").reset();
         document.getElementById("formulario").style.display = "none";
       } catch (error) {
